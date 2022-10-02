@@ -1,0 +1,10 @@
+node_modules
+dist
+lib
+es
+/types
+/coverage
+
+size-plugin.json
+stats.json
+stats.html
