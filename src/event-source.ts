@@ -37,20 +37,25 @@ export function fromEventSource<TData = unknown>(
     parseFn: (_, message) => JSON.parse(message),
   };
   const { eventTypes, parseFn } = { ...defaultOptions, ...(options || {}) };
+
   const events$ = eventTypes.map((eventType) =>
-    fromEvent<{ data: string }>(sse, eventType).pipe(
-      map((event: MessageEvent<string>) => parseFn(eventType, event.data))
+    fromEvent<MessageEvent>(sse, eventType).pipe(
+      map((event) => parseFn(eventType, event.data))
     )
   );
-
-  const error$ = fromEvent<{ data?: string }>(sse, 'error').pipe(
-    map((message) => JSON.parse(message?.data || 'null')),
-    map((data) => {
-      throw new Error(data?.errorMessage || 'Event Source Error');
+  const error$ = fromEvent<Event>(sse, 'error').pipe(
+    map((event) => {
+      const sse =
+        event.target instanceof EventSource ? event.target : undefined;
+      throw new Error(
+        `An error occurred while attempting to connect${
+          sse?.url ? `: ${sse.url}` : '.'
+        }`
+      );
     })
   );
-
   const complete$ = fromEvent(sse, 'complete');
+
   return merge(...events$, error$).pipe(takeUntil(complete$));
 }
 

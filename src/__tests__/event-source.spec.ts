@@ -100,7 +100,9 @@ describe('EventSource helpers', () => {
         await firstValueFrom(sse$.pipe(take(5), toArray()));
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
-        expect(error?.message).toMatchInlineSnapshot(`"Event Source Error"`);
+        expect(error?.message).toMatchInlineSnapshot(
+          `"An error occurred while attempting to connect."`
+        );
       }
     });
   });
