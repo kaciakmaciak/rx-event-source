@@ -51,7 +51,7 @@ const options = {
   // ...
 };
 
-eventSource$('/api/v1/sse', options).subscribe((data) => {
+eventSource$('/api/v1/sse', { withCredentials: false }, options).subscribe((data) => {
   console.log(data);
 });
 ```
@@ -72,7 +72,7 @@ function isError(data) {
   // ...
 }
 
-eventSource$('/api/v1/sse', options).pipe(
+eventSource$('/api/v1/sse', { withCredentials: false }, options).pipe(
   map((data) => {
     if (isError(data)) {
       throw new Error(data.error);
