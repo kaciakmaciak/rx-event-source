@@ -11,7 +11,7 @@ export interface EventSourceOptions<TData = unknown> {
    * Function to parse messages.
    * @default (_, message) => JSON.parse(message)
    */
-  parseFn: (eventType: string, message: string) => TData;
+  parseFn?: (eventType: string, message: string) => TData;
 }
 
 /**
