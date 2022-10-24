@@ -19,6 +19,7 @@ export const handlers = [
       'world',
       123,
       new Error('Test Error'),
+      'complete',
     ]);
   }),
   rest.get(`/sse/network-error`, (_, res) => {
