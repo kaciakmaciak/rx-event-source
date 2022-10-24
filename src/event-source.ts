@@ -6,7 +6,7 @@ export interface EventSourceOptions<TData = unknown> {
    * Event types to subscribe to.
    * @default ['message']
    */
-  eventTypes: Array<string>;
+  eventTypes?: Array<string>;
   /**
    * Function to parse messages.
    * @default (_, message) => JSON.parse(message)
