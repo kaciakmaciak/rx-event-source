@@ -40,10 +40,46 @@ yarn add rx-event-source rxjs@7
 
 ## Usage
 
+### Basic usage
+
+See [available options](https://kaciakmaciak.github.io/rx-event-source/interfaces/EventSourceOptions.html).
+
 ```TypeScript
 import { eventSource$ } from 'rx-event-source';
 
-eventSource$('/api/v1/sse').subscribe((data) => {
+const options = {
+  // ...
+};
+
+eventSource$('/api/v1/sse', options).subscribe((data) => {
+  console.log(data);
+});
+```
+
+### Handling streaming errors
+
+The streaming error can be emitted as a message with specific data format and then
+handled manually by throwing an error.
+
+```TypeScript
+import { eventSource$ } from 'rx-event-source';
+
+const options = {
+  // ...
+};
+
+function isError(data) {
+  // ...
+}
+
+eventSource$('/api/v1/sse', options).pipe(
+  map((data) => {
+    if (isError(data)) {
+      throw new Error(data.error);
+    }
+    return data;
+  })
+).subscribe((data) => {
   console.log(data);
 });
 ```
