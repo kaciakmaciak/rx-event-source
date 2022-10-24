@@ -1,5 +1,5 @@
 import { fromEvent, merge, Observable, of } from 'rxjs';
-import { map, finalize, takeUntil, switchMap } from 'rxjs/operators';
+import { map, finalize, takeUntil, switchMap, filter } from 'rxjs/operators';
 
 export interface EventSourceOptions<TData = unknown> {
   /**
@@ -12,6 +12,11 @@ export interface EventSourceOptions<TData = unknown> {
    * @default (_, message) => JSON.parse(message)
    */
   parseFn?: (eventType: string, message: string) => TData;
+  /**
+   * A list of allowed origins.
+   * If set, messages from origins not listed are blocked.
+   */
+  allowedOrigins?: Array<string>;
 }
 
 /**
@@ -39,10 +44,16 @@ export function fromEventSource<TData = unknown>(
     eventTypes: ['message'],
     parseFn: (_, message) => JSON.parse(message),
   };
-  const { eventTypes, parseFn } = { ...defaultOptions, ...(options || {}) };
+  const { eventTypes, parseFn, allowedOrigins } = {
+    ...defaultOptions,
+    ...(options || {}),
+  };
 
   const events$ = eventTypes.map((eventType) =>
     fromEvent<MessageEvent>(sse, eventType).pipe(
+      filter(
+        (event) => !allowedOrigins || allowedOrigins.includes(event.origin)
+      ),
       map((event) => parseFn(eventType, event.data))
     )
   );

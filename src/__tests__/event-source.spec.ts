@@ -105,5 +105,27 @@ describe('EventSource helpers', () => {
         );
       }
     });
+
+    describe('options', () => {
+      describe('allowedOrigins', () => {
+        it('should not block message from localhost', async () => {
+          const sse$ = eventSource$(createAbsoluteUrl('/sse'), undefined, {
+            allowedOrigins: ['http://localhost'],
+          });
+          expect(
+            (await firstValueFrom(sse$.pipe(take(5), toArray()))).length
+          ).toBeGreaterThan(0);
+        });
+
+        it('should block messages from localhost', async () => {
+          const sse$ = eventSource$(createAbsoluteUrl('/sse'), undefined, {
+            allowedOrigins: ['https://this-is-not-localhost.com'],
+          });
+          expect(
+            await firstValueFrom(sse$.pipe(take(5), toArray()))
+          ).toHaveLength(0);
+        });
+      });
+    });
   });
 });
