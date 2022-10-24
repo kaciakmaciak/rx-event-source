@@ -20,7 +20,10 @@ export interface EventSourceOptions<TData = unknown> {
  * @example
  * ```ts
  * const sse = new EventSource(url, configuration);
- * return fromEventSource(sse).pipe(
+ * const options = {
+ *   // ...
+ * };
+ * return fromEventSource(sse, options).pipe(
  *   finalize(() => {
  *     // Make sure the EventSource is closed once not needed.
  *     sse.close();
@@ -67,9 +70,14 @@ export function fromEventSource<TData = unknown>(
  *
  * @example
  * ```ts
- * const sse$ = eventSource$('https://example.com/sse', {
- *   withCredentials: true,
- * });
+ * const options = {
+ *   // ...
+ * };
+ * const sse$ = eventSource$(
+ *   'https://example.com/sse',
+ *   { withCredentials: false }, // or true
+ *   options
+ * );
  * sse$.subscribe((data) => {
  *   console.log(data);
  * });
