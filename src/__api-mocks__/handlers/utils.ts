@@ -11,8 +11,9 @@ function createSseMessage(eventType: string, data: unknown) {
  * Returns SSE error message.
  */
 function createSseErrorMessage(errorMessage: string) {
-  return createSseMessage('error', {
-    errorMessage,
+  return createSseMessage('message', {
+    type: 'error',
+    data: errorMessage,
   });
 }
 

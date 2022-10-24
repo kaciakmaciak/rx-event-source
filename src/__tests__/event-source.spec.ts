@@ -1,5 +1,5 @@
 import { firstValueFrom, of } from 'rxjs';
-import { catchError, take, toArray } from 'rxjs/operators';
+import { catchError, map, take, toArray } from 'rxjs/operators';
 
 import { eventSource$ } from '../event-source';
 
@@ -66,7 +66,15 @@ describe('EventSource helpers', () => {
     });
 
     it('should emit values from event source until error', async () => {
-      const sse$ = eventSource$(createAbsoluteUrl('/sse/error'));
+      const sse$ = eventSource$(createAbsoluteUrl('/sse/error')).pipe(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        map((data: any) => {
+          if (data.type === 'error') {
+            throw new Error(data.data);
+          }
+          return data;
+        })
+      );
       expect(
         await firstValueFrom(
           sse$.pipe(
